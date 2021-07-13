@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import './quasar'
 import firebaseInstance from './middleware/firebase'
+import Croppa from 'vue-croppa';
+Vue.use(Croppa);
 
 Vue.config.productionTip = false
 firebaseInstance.firebase.auth().onAuthStateChanged((user )=>{
