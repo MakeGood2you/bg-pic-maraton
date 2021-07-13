@@ -19,6 +19,7 @@
     "quasar": "1.15.1",
     "stylus-loader": "^6.1.0",
     "twilio": "3.57.0",
+    "vuex": "3.6.2",
     "vue": "2.6.12",
     "vue-clipboard2": "0.3.1",
     "vue-confetti": "2.2.1",

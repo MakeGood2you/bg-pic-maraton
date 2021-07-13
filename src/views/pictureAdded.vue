@@ -45,11 +45,13 @@
 
 <script>
 import firebaseDatabase from "../middleware/firebase/database";
+import database from "../middleware/firebase/database";
 import firebase from "firebase";
 import 'firebase/storage';
-import database from "../middleware/firebase/database";
 import Vue from 'vue';
 import VueClipboard from 'vue-clipboard2'
+import {mapState} from 'vuex'
+
 Vue.use(VueClipboard);
 
 export default {
@@ -70,17 +72,21 @@ export default {
       daylight: false
     }
   },
+  computed:{
+    ...mapState('app', ['confirmDialog']),
+
+  },
   methods: {
     finished() {
       this.$refs.uploader.reset()
       alert('תמונות הועלו בהצלחה')
     },
-    copp(){
+    copp() {
       alert('טלפון הועתק')
     },
-     copy(){
-       firebaseDatabase.setCopyNumber({userIdentity:this.uid ,phone:this.phoneNumber, leadName:this.firstName})
-       alert('פרטיך נשלחו בהצלחה לצלם')
+    copy() {
+      firebaseDatabase.setCopyNumber({userIdentity: this.uid, phone: this.phoneNumber, leadName: this.firstName})
+      alert('פרטיך נשלחו בהצלחה לצלם')
     },
     async makeUploadTaskWithTimestamp(file) {
 
@@ -114,18 +120,19 @@ export default {
   },
 
   async created() {
+    // console.log(this.confirmDialog)
     const userIdentity = this.$route.params.uid
     const eventIdentity = this.$route.params.eid
     const phoneNumber = this.phoneNumber
-
     const obj = await database.getAdminDetails({userIdentity, eventIdentity})
+
     this.adminName = obj.organizer
     this.adminDate = obj.date
 
-    const info = await database.getBInfo({userIdentity, eventIdentity})
-    this.BName=info.BName
-    this.BEmail=info.BEmail
-    this.BPhone=info.BPhone
+    const businessDetails = await database.getBInfo({userIdentity, eventIdentity})
+    this.BName=businessDetails.BName
+    this.BEmail=businessDetails.BEmail
+    this.BPhone=businessDetails.BPhone
 
     if (this.BName ===null){
       this.BName='-'

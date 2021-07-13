@@ -58,6 +58,7 @@ async function getIsOpen(options) {
 function getAdminDetails(options) {
     return firebaseInstance.firebase.database().ref(`users/${options.userIdentity}/data/events/${options.eventIdentity}`).once(`value`)
         .then((res) => {
+            debugger
             return res.val()
         })
 }
