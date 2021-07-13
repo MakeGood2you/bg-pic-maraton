@@ -1,0 +1,28 @@
+{
+  "projects": {
+    "default": "osher-project",
+    "picpic": "osher-project"
+  },
+  "targets": {
+    "osher-project": {
+      "hosting": {
+        "guests-app": [
+          "guests-app"
+        ],
+        "guests": [
+          "picpic-guests"
+        ]
+      }
+    },
+    "staging": {
+      "hosting": {
+        "osher-project": [
+          "guests-app"
+        ],
+        "guest": [
+          "picpic-guests"
+        ]
+      }
+    }
+  }
+}
