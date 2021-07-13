@@ -84,7 +84,7 @@ export default {
     },
     async makeUploadTaskWithTimestamp(file) {
 
-      const storageRef = firebase.storage().ref(`${this.eid}`)
+      const storageRef = firebase.storage().ref(`/users/${this.uid}/events/${this.eid}`)
       const firstName = this.firstName
       const originalName = file[0].name
       const newFilename = `${Date.now()}.${file[0].name}`
