@@ -11,7 +11,7 @@
         </div>
         <br>
         <q-uploader
-            :url="makeUploadTaskWithTimestamp"
+            :url="uploadImage"
             multiple
             @finish="finished"
             ref="uploader"
@@ -46,11 +46,10 @@
 <script>
 import firebaseDatabase from "../middleware/firebase/database";
 import database from "../middleware/firebase/database";
-import firebase from "firebase";
 import 'firebase/storage';
 import Vue from 'vue';
 import VueClipboard from 'vue-clipboard2'
-import {mapState} from 'vuex'
+import {mapActions, mapState} from 'vuex'
 
 Vue.use(VueClipboard);
 
@@ -77,6 +76,7 @@ export default {
 
   },
   methods: {
+    ...mapActions('app', ['uploadImageToStorage','setLimitAction']),
     finished() {
       this.$refs.uploader.reset()
       alert('תמונות הועלו בהצלחה')
@@ -88,32 +88,24 @@ export default {
       firebaseDatabase.setCopyNumber({userIdentity: this.uid, phone: this.phoneNumber, leadName: this.firstName})
       alert('פרטיך נשלחו בהצלחה לצלם')
     },
-    async makeUploadTaskWithTimestamp(file) {
-
-      const storageRef = firebase.storage().ref(`${this.eid}`)
+    async uploadImage(file) {
       const firstName = this.firstName
-      const originalName = file[0].name
-      const newFilename = `${Date.now()}.${file[0].name}`
-      const metadata = {
-        customMetadata: {
-          originalName,
-          firstName
-        }
-      }
       if (this.limitedPic <= 0) {
         console.log('none')
       } else {
-
-        await storageRef.child(newFilename).put(file[0], metadata)
-
         this.limitedPic--
 
-        const userIdentity = this.$route.params.uid
-        const eventIdentity = this.$route.params.eid
-        const phoneNumber = this.phoneNumber
-        const counterImg = this.limitedPic
+        let options = {
+          firstName,
+          file,
+          uid: this.uid,
+          eid: this.eid,
+          fileName: file[0].name,
+          phoneNumber: this.phoneNumber,
+          limitedPicCounter: this.limitedPic
+        }
 
-        await firebaseDatabase.setLimit({userIdentity, eventIdentity, phoneNumber, counterImg})
+        await this.uploadImageToStorage(options)
 
       }
     }
@@ -130,18 +122,18 @@ export default {
     this.adminDate = obj.date
 
     const businessDetails = await database.getBInfo({userIdentity, eventIdentity})
-    this.BName=businessDetails.BName
-    this.BEmail=businessDetails.BEmail
-    this.BPhone=businessDetails.BPhone
+    this.BName = businessDetails.BName
+    this.BEmail = businessDetails.BEmail
+    this.BPhone = businessDetails.BPhone
 
-    if (this.BName ===null){
-      this.BName='-'
+    if (this.BName === null) {
+      this.BName = '-'
     }
-    if (this.BEmail ===null){
-      this.BEmail='-'
+    if (this.BEmail === null) {
+      this.BEmail = '-'
     }
-    if (this.BPhone ===null){
-      this.BPhone='-'
+    if (this.BPhone === null) {
+      this.BPhone = '-'
     }
     console.log(this.adminDate)
     let date = new Date();

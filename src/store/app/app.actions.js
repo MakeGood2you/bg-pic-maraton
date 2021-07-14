@@ -1,36 +1,28 @@
 import 'firebase/storage';
-import db from '../../middleware/firebase/database/'
+import db from '../../middleware/firebase/database/api'
+import storage from '../../middleware/firebase/storage/'
 
 export default {
-    
-    async uploadImageToStorage() {
-        const storageRef = firebase.storage().ref(`${this.eid}`)
-        const firstName = this.firstName
-        const originalName = file[0].name
-        const newFilename = `${Date.now()}.${file[0].name}`
-        const metadata = {
-            customMetadata: {
-                originalName,
-                firstName
-            }
-        }
-        if (this.limitedPic <= 0) {
-            console.log('none')
-        } else {
-
-            await storageRef.child(newFilename).put(file[0], metadata)
-
-            this.limitedPic--
-
-            const userIdentity = this.$route.params.uid
-            const eventIdentity = this.$route.params.eid
-            const phoneNumber = this.phoneNumber
-            const counterImg = this.limitedPic
-
-            await firebaseDatabase.setLimit({userIdentity, eventIdentity, phoneNumber, counterImg})
-
-        }
+    // this is the options object///
+    ///////////////////////////////
+    //   firstName,
+    //   file,
+    //   uid:userid
+    //   eid: event id,
+    //   fileName: file[0].name,
+    //   phoneNumber: this.phoneNumber,
+    //   limitedPicCounter: this.limitedPic from user
+    uploadImageToStorage: async ({commit, state, dispatch}, options) => {
+        let entity = `users/${options.uid}/events/${options.eid}`
+        const storageRef = storage.storageRef(entity)
+        const uploader = await storageRef.child()
+            .put(options.file[0], {uploaderName: options.firstName})
+const downloader = uploader.get
+        // set limit of image each user
+        entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
+        await db.set(entity, options.limitedPicCounter)
     },
+
 
     addQuestionsAndAnswers: async ({commit, dispatch}, data) => {
         if (!data) return

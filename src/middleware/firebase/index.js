@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import firebaseMessaging from 'firebase/messaging'
 import auth from 'firebase/auth';
+import  'firebase/storage';
 
 
 firebase.initializeApp ({
