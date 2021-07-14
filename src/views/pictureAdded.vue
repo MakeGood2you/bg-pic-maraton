@@ -110,6 +110,7 @@ import 'firebase/storage';
 import database from "../middleware/firebase/database";
 import Vue from 'vue';
 import VueClipboard from 'vue-clipboard2'
+import {mapState} from 'vuex'
 
 Vue.use(VueClipboard);
 
@@ -132,6 +133,10 @@ export default {
       myCroppa: {}
 
     }
+  },
+  computed:{
+    ...mapState('app', ['confirmDialog']),
+
   },
   methods: {
     uploadCroppedImage() {
@@ -195,10 +200,10 @@ export default {
     this.adminName = obj.organizer
     this.adminDate = obj.date
 
-    const info = await database.getBInfo({userIdentity, eventIdentity})
-    this.BName = info.BName
-    this.BEmail = info.BEmail
-    this.BPhone = info.BPhone
+    const businessDetails = await database.getBInfo({userIdentity, eventIdentity})
+    this.BName = businessDetails.BName
+    this.BEmail = businessDetails.BEmail
+    this.BPhone = businessDetails.BPhone
 
     if (this.BName === null) {
       this.BName = '-'
