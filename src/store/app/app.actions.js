@@ -1,6 +1,7 @@
 import 'firebase/storage';
 import db from '../../middleware/firebase/database/api'
 import storage from '../../middleware/firebase/storage/'
+import {formatNewDateToString} from './utils'
 
 export default {
     // this is the options object///
@@ -14,34 +15,64 @@ export default {
     //   limitedPicCounter: this.limitedPic from user
     uploadImageToStorage: async ({commit, state, dispatch}, options) => {
         let entity = `users/${options.uid}/events/${options.eid}`
-        const storageRef = storage.storageRef(entity)
-        const uploader = await storageRef.child()
-            .put(options.file[0], {uploaderName: options.firstName})
-const downloader = uploader.get
+        const storageRef = (entity) => storage.storageRef(entity)
+
+        let listResult = await storageRef(entity).listAll()//// check the object
+        let length = listResult.items.length
+
+        await storageRef(entity).child(`${length}`) // uploader image blob
+            .put(options.file, {uploaderName: options.firstName})
+        const entityBlob = entity + '/' + length
+
+        const urlBlob = await storageRef(entityBlob).getDownloadURL()
+        console.log(urlBlob)
+        // const downloader = uploader
         // set limit of image each user
+        // entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
+        // await db.set(entity, options.limitedPicCounter)
         entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
         await db.set(entity, options.limitedPicCounter)
     },
 
+    getAdminDetails: async ({commit, state, dispatch}, options) => {
+        const entity = `users/${options.uid}/data/events/${options.eid}`// event entity
+        const eventDetails = await db.get(entity) // get event details
+        commit('setEventDetails', eventDetails)
+    },
 
-    addQuestionsAndAnswers: async ({commit, dispatch}, data) => {
-        if (!data) return
-        const entity = `/questionsAndAnswers`
-        let key = (await db.create(entity, data)).key
-        console.log(key)
-        commit("addQuestionsAndAnswers", {data, key})
+    getBusinessInfo: async ({commit, state, dispatch}, options) => {
+        const entity = `users/${options.uid}/data/businessInfo`// event entity
+        const businessInfo = await db.get(entity) // get event details
+
+        commit('setBusinessInfo', businessInfo)
     },
-    getQuestionsAndAnswers: async ({commit, dispatch}) => {
-        const entity = `/questionsAndAnswers`
-        const data = await db.get(entity)
-        console.log(data)
-        commit(`setQuestionsAndAnswers`, data)
+
+    isEventOpenPermission: async ({commit, state}) => {
+        const momentDate = formatNewDateToString()
+        const eventDate = state.eventDetails.date
+
+        if (momentDate === eventDate) {
+            const isOpen = state.eventDetails.isOpen
+            console.log(isOpen)
+            if (isOpen === null || undefined) {
+                commit('setBoolean', {stateName: 'daylight', bool: false}) //close event
+                alert('הגישה למערכת חסומה')
+            } else {
+                if (isOpen === true) {
+                    commit('setBoolean', {stateName: 'daylight', bool: true}) // open event
+                } else {
+                    alert('הרשאה למערכת לא תקפה')
+                }
+            }
+        } else {
+            alert('הרשאה לשימוש תפתח ביום האירוע')
+        }
+
     },
-    removeQuestionAndAnswerAction: async ({commit, dispatch}, key) => {
-        const entity = `/questionsAndAnswers/${key}`
-        const res = await db.remove(entity)
-        console.log(res)
-        commit(`removeQuestionsAndAnswers`, key)
+    getLimitFromGuest: async ({commit, dispatch}, options) => {
+        const entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
+        const guestLimit = await db.get(entity)
+        commit("setGuestLimit", guestLimit)
     },
 
 }
