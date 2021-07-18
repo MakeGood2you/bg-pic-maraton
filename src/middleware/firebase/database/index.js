@@ -33,6 +33,7 @@ async function setLimit(options) {
 }
 
 function setDetails(options) {
+    debugger
     return firebaseInstance.firebase.database().ref(`users/${options.userIdentity}/data/events/${options.eventIdentity}/guests/${options.guestPhone}`).once(`value`)
         .then(res => {
             let x = null;
@@ -45,6 +46,7 @@ function setDetails(options) {
                 }
             }
             if (x === null) {
+                debugger
                 return firebaseInstance.firebase.database().ref(`users/${options.userIdentity}/data/events/${options.eventIdentity}/guests/${options.guestPhone}`).set(options.guestsDetails)
             }
         })

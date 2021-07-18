@@ -5,25 +5,29 @@
             :height="232.5"
             :align="'center'"
             :placeholder-font-size="0"
+            :placeholder-color="'default'"
             :accept="'.jpg, .jpeg, .png, image/*'"
             :quality="2"
-            initial-size="contain"
+            initial-size="cover"
             :zoom-speed="3"
             :disabled="false"
             :disable-click-to-choose="false"
             :disable-drag-to-move="false"
             :disable-scroll-to-zoom="false"
             :disable-rotation="false"
-            :prevent-white-space="true"
+            :prevent-white-space="false"
             :reverse-scroll-to-zoom="false"
             :show-remove-button="false"
             :remove-button-color="'red'"
             :remove-button-size="0"
+            class="column items-center"
+            :show-loading="true"
     >
-            <img slot="placeholder"
-                 src="https://firebasestorage.googleapis.com/v0/b/osher-project.appspot.com/o/users%2FPW93KJl7bAZuZo9lXNDrqZyWLBD3%2Fevents%2F-MeYoKhDC-5LR5UdcwjO%2F3?alt=media&token=d81808d0-4434-411b-a882-71d6a9224999"
-                 class="addon">
+
+      <!--      <div class="spinner" v-if="myCroppa && myCroppa.loading"></div>-->
+
     </croppa>
+    <Loading v-if="loading"></Loading>
 
     <div class="row justify-between q-my-sm btns">
       <q-btn
@@ -54,11 +58,13 @@
 </template>
 
 <script>
-import {mapActions, mapState} from 'vuex'
+import {mapActions, mapState, mapMutations} from 'vuex'
+import Loading from '../Loading'
 
 export default {
   name: "Cropper",
   props: ['params'],
+  components: {Loading},
   data: () => ({
     myCroppa: {},
     LocalGuestLimit: 0,
@@ -69,10 +75,19 @@ export default {
     // firstName: this.$route.params.fullName,
 
   }),
-  computed: mapState('app', ['guestLimit']),
+  computed: {
+    placeholder() {
+      return this.myCroppa && this.myCroppa.loading ? '' : 'Choose a large file to see the loading'
+    },
+    initialImage() {
+      return 'https://picsum.photos/900/900?' + new Date().valueOf()
+    },
+    ...mapState('app', ['guestLimit', 'loading']),
+  },
 
   methods: {
     ...mapActions('app', ['uploadImageToStorage']),
+    ...mapMutations('app', ['setBoolean']),
     async uploadCroppedImage() {
       if (!this.myCroppa.hasImage()) {
         alert('no image to upload')
@@ -80,21 +95,23 @@ export default {
       }
       await this.myCroppa.generateBlob(
           async (blob) => {
-           await this.uploadImage(blob)
+            await this.uploadImage(blob)
           },
-          '.jpg, .png, .jpeg, image/*', 0.8); // 80% compressed jpeg file
+          '.jpg, .png, .jpeg, image/*'); // 80% compressed jpeg file
       console.log(this.myCroppa)
       this.myCroppa.remove()
     },
+
     async uploadImage(file) {
       if (this.LocalGuestLimit <= 0) {
         console.log('none')
       } else {
+this.setBoolean({stateName:'loading', bool:true})
         const options = this.createParams(file)
-
-        this.LocalGuestLimit--
-
         await this.uploadImageToStorage(options)
+        debugger
+        this.setBoolean({stateName:'loading', bool:false})
+
       }
     },
 
@@ -105,7 +122,7 @@ export default {
         uid: this.params.uid,
         eid: this.params.eid,
         phoneNumber: this.params.phoneNumber,
-        limitedPicCounter: this.LocalGuestLimit
+        limitedPicCounter: --this.LocalGuestLimit
       }
     }
   },
@@ -127,7 +144,14 @@ export default {
   width: 328.875px;
 }
 
-.croppa {
-  margin-top: -25px;
-}
+/*.croppa-container {*/
+/*  background-color: lightblue;*/
+/*  border: 2px solid grey;*/
+/*  border-radius: 8px;*/
+/*}*/
+
+/*.croppa-container:hover {*/
+/*  opacity: 1;*/
+/*  background-color: #8ac9ef;*/
+/*}*/
 </style>

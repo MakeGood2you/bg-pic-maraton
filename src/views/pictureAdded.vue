@@ -68,6 +68,7 @@ export default {
       const options = this.params
       await this.getAdminDetails(options)
       await this.getLimitFromGuest(options)
+      debugger
       await this.isEventOpenPermission()
       await this.getBusinessInfo(options)
     },

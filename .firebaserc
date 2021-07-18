@@ -1,7 +1,8 @@
 {
   "projects": {
     "default": "osher-project",
-    "picpic": "osher-project"
+    "picpic": "osher-project",
+    "picpic guest": "osher-project"
   },
   "targets": {
     "osher-project": {

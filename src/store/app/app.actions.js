@@ -14,29 +14,39 @@ export default {
     //   phoneNumber: this.phoneNumber,
     //   limitedPicCounter: this.limitedPic from user
     uploadImageToStorage: async ({commit, state, dispatch}, options) => {
-        let entity = `users/${options.uid}/events/${options.eid}`
         const storageRef = (entity) => storage.storageRef(entity)
+        let entity = `users/${options.uid}/events/${options.eid}`
 
-        let listResult = await storageRef(entity).listAll()//// check the object
+        let listResult = await storageRef(entity).listAll()//// check the length of all files
         let length = listResult.items.length
+        ++length
 
-        await storageRef(entity).child(`${length}`) // uploader image blob
-            .put(options.file, {uploaderName: options.firstName})
-        const entityBlob = entity + '/' + length
-
-        const urlBlob = await storageRef(entityBlob).getDownloadURL()
+        const pathEntityBlob = entity + '/' + length
+        // uploader image blob
+        await storageRef(pathEntityBlob).put(options.file)
+        const urlBlob = await storageRef(pathEntityBlob).getDownloadURL()
         console.log(urlBlob)
-        // const downloader = uploader
         // set limit of image each user
-        // entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
-        // await db.set(entity, options.limitedPicCounter)
+        const dbFileName = length < 10 ? `0${length}` : `${length}`
+        entity = `users/${options.uid}/data/events/${options.eid}/photos/${dbFileName}`
+        await db.set(entity, {
+            photoURL: urlBlob,
+            isDownload: false,
+            isChosen: false
+        })
+
+        entity = `users/${options.uid}/data/events/${options.eid}/picCounter`
+        await db.set(entity, length)
         entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
+        debugger
         await db.set(entity, options.limitedPicCounter)
+        commit('setGuestLimit', options.limitedPicCounter)
     },
 
     getAdminDetails: async ({commit, state, dispatch}, options) => {
         const entity = `users/${options.uid}/data/events/${options.eid}`// event entity
         const eventDetails = await db.get(entity) // get event details
+        debugger
         commit('setEventDetails', eventDetails)
     },
 
@@ -49,8 +59,8 @@ export default {
 
     isEventOpenPermission: async ({commit, state}) => {
         const momentDate = formatNewDateToString()
+        debugger
         const eventDate = state.eventDetails.date
-
         if (momentDate === eventDate) {
             const isOpen = state.eventDetails.isOpen
             console.log(isOpen)
