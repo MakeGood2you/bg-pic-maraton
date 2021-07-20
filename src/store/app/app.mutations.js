@@ -8,6 +8,9 @@ export default {
     setGuestLimit: (state, guestLimit) => {
         state.guestLimit = guestLimit
     },
+    setAdminLimit: (state, adminLimit) => {
+        state.adminLimit = adminLimit
+    },
     setBusinessInfo: (state, businessInfo) => {
         state.businessInfo = businessInfo
     },

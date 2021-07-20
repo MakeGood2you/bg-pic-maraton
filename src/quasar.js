@@ -13,3 +13,7 @@ Vue.use(Quasar, {
       loading:{}
     },
  })
+
+/*
+data/businessInfo
+ */

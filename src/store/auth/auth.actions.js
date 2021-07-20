@@ -1,5 +1,6 @@
 import authApi from '../../middleware/firebase/auth';
 import database from "../../middleware/firebase/database";
+import db from "../../middleware/firebase/database/api";
 
 
 export default {
@@ -50,40 +51,10 @@ export default {
         commit('setUser', null);
     },
 
-    checkProviderUser: async ({commit, state}, provider) => {
-        let firebaseAuthUser
-        if (provider) {
-            if (provider.email && provider.password) {
-                firebaseAuthUser = await authApi
-                    .loginWithMailAndPass(provider)
-                // TODO: Check if user is already exist
-                return firebaseAuthUser
-
-            } else if (provider === 'facebook' || provider === 'google') {
-                firebaseAuthUser = await authApi.loginProvider(provider)
-                return firebaseAuthUser
-            } else return false
-        }
+    sendCodeToVerifyAction: async ({commit, state}, options) => {
+        debugger
+        return await authApi.sendCodeToVerify( options)
     },
 
-    checkTerm: async ({commit}, uid) => {
-        const term = await database.checkTermService(uid)
-        return term
-    },
-
-    setTermService: async ({state, commit}, uid) => {
-        uid = state.user.uid ||
-            JSON.parse(localStorage.getItem('user')) ||
-            window.user.uid || uid
-        commit('setPropertyTrueOrFalse', 'isFixed')
-
-
-        await database.setTerm(uid)
-    },
-    updatePassword: async ({state, commit}, newPassword) => {
-        const result = await authApi.updatePassword(newPassword)
-        console.log(result)
-        return result
-    }
 
 }

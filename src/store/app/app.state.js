@@ -3,7 +3,7 @@ export default {
     loading: false,
     error: '',
     isOpen: false,
-
+    adminLimit:'',
     daylight: false,
     eventDetails: {
         QR: true,
@@ -16,6 +16,7 @@ export default {
         organizer: "aa",
         place: "111"
     },
+
     businessInfo: {
         BName: '-',
         BEmail: '-',

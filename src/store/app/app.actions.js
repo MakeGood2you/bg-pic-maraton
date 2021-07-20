@@ -3,6 +3,7 @@ import db from '../../middleware/firebase/database/api'
 import storage from '../../middleware/firebase/storage/'
 import {formatNewDateToString} from './utils'
 
+const eventPath = (uid,eid) => `users/${uid}/data/events/${eid}`
 export default {
     // this is the options object///
     ///////////////////////////////
@@ -20,7 +21,7 @@ export default {
         let listResult = await storageRef(entity).listAll()//// check the length of all files
         let length = listResult.items.length
         ++length
-
+        //create path
         const pathEntityBlob = entity + '/' + length
         // uploader image blob
         await storageRef(pathEntityBlob).put(options.file)
@@ -32,13 +33,13 @@ export default {
         await db.set(entity, {
             photoURL: urlBlob,
             isDownload: false,
-            isChosen: false
+            isChosen: false,
+            uploadTime: new Date().getTime()
         })
 
         entity = `users/${options.uid}/data/events/${options.eid}/picCounter`
         await db.set(entity, length)
-        entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
-        debugger
+        entity = `guests/${options.uid}/${options.eid}/${options.phoneNumber}/limit`
         await db.set(entity, options.limitedPicCounter)
         commit('setGuestLimit', options.limitedPicCounter)
     },
@@ -46,7 +47,6 @@ export default {
     getAdminDetails: async ({commit, state, dispatch}, options) => {
         const entity = `users/${options.uid}/data/events/${options.eid}`// event entity
         const eventDetails = await db.get(entity) // get event details
-        debugger
         commit('setEventDetails', eventDetails)
     },
 
@@ -77,12 +77,17 @@ export default {
         } else {
             alert('הרשאה לשימוש תפתח ביום האירוע')
         }
-
     },
+
     getLimitFromGuest: async ({commit, dispatch}, options) => {
         const entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
         const guestLimit = await db.get(entity)
         commit("setGuestLimit", guestLimit)
+    },
+    getLimitFromAdmin: async ({commit, dispatch}, options) => {
+        const entity = `${eventPath(options.uid,options.eid)}/imgLimit`
+        const adminLimit = await db.get(entity)
+        commit("setGuestLimit", adminLimit)
     },
 
 }

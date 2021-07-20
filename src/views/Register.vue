@@ -9,15 +9,16 @@
           <br>
           <h5>התחבר כמוזמן</h5>
           <div>
-            <div dir="ltr">
+            <div dir="ltr" v-if="!code">
               <q-input id="fullName" v-model="details.fullName" :rules="[val => !!val || 'שדה חובה']" type="text"> שם
               </q-input>
               <q-input id="phone" v-model="phone" :rules="[val => !!val || 'שדה חובה']" mask="###-###-####" stack-label>
                 טלפון
               </q-input>
+              <div id="recaptcha-container">
+              </div>
             </div>
-            <div id="recaptcha-container">
-            </div>
+
             <br>
             <div v-show="code" class="verifyCode">
               <q-input id="code" v-model="password" label="הזן את קוד האימות" stack-label/>
@@ -73,22 +74,23 @@ export default {
 
   methods: {
 
-     async sendCodeToVerify() {
+    async sendCodeToVerify() {
 
-         window.recaptchaVerifier = new firebaseInstance.firebase.auth.RecaptchaVerifier('recaptcha-container');
-         const phoneNumber = '+972' + this.phone;
-         const appVerifier = window.recaptchaVerifier;
+      window.recaptchaVerifier = new firebaseInstance.firebase.auth.RecaptchaVerifier('recaptcha-container');
+      const phoneNumber = '+972' + this.phone;
+      const appVerifier = window.recaptchaVerifier;
+      debugger
+      firebaseInstance.firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
 
-         firebaseInstance.firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+          .then((confirmationResult) => {
+            // SMS sent. Prompt user to type the code from the message, then sign the
+            // user in with confirmationResult.confirm(code).
+            window.confirmationResult = confirmationResult;
+            debugger
+            alert('קוד אימות נשלח ברגעים אלו')
+            this.code = !this.code
 
-             .then((confirmationResult) => {
-               // SMS sent. Prompt user to type the code from the message, then sign the
-               // user in with confirmationResult.confirm(code).
-               window.confirmationResult = confirmationResult;
-               alert('קוד אימות נשלח ברגעים אלו')
-               this.code = !this.code
-
-             })
+          })
     },
 
 
@@ -172,8 +174,8 @@ export default {
 }
 
 iframe {
-margin-right:  -100px;
- padding-left: 18px;
+  margin-right: -100px;
+  padding-left: 18px;
 }
 
 
