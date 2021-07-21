@@ -30,6 +30,7 @@ export default {
         // set limit of image each user
         const dbFileName = length < 10 ? `0${length}` : `${length}`
         entity = `users/${options.uid}/data/events/${options.eid}/photos/${dbFileName}`
+       debugger
         await db.set(entity, {
             photoURL: urlBlob,
             isDownload: false,
@@ -59,7 +60,6 @@ export default {
 
     isEventOpenPermission: async ({commit, state}) => {
         const momentDate = formatNewDateToString()
-        debugger
         const eventDate = state.eventDetails.date
         if (momentDate === eventDate) {
             const isOpen = state.eventDetails.isOpen
@@ -80,7 +80,7 @@ export default {
     },
 
     getLimitFromGuest: async ({commit, dispatch}, options) => {
-        const entity = `users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`
+        let entity = `guests/${options.uid}/${options.eid}/${options.guestPhone}`
         const guestLimit = await db.get(entity)
         commit("setGuestLimit", guestLimit)
     },

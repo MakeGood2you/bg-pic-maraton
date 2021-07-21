@@ -43,6 +43,7 @@ import VueClipboard from 'vue-clipboard2'
 import {mapActions, mapState} from 'vuex'
 import Cropper from '../components/addImage/Cropper'
 Vue.use(VueClipboard);
+import { positive} from "../middleware/notify/index";
 
 export default {
 
@@ -64,20 +65,20 @@ export default {
   },
   methods: {
     ...mapActions('app', ['uploadImageToStorage', 'isEventOpenPermission', 'getAdminDetails', 'getBusinessInfo','getLimitFromGuest']),
+    ...mapActions('auth', ['setLead']),
     async init() {
       const options = this.params
       await this.getAdminDetails(options)
       await this.getLimitFromGuest(options)
-      debugger
       await this.isEventOpenPermission()
       await this.getBusinessInfo(options)
     },
 
-    copy() {
-      firebaseDatabase.setCopyNumber(this.params)
-      alert('פרטיך נשלחו בהצלחה לצלם')
+    async copy() {
+     await this.setLead(this.params)
+      alert('הפרטים שלך נשלחו בהצלחה')
+      // this.$q.notify(positive('התחברת בהצלחה :)'))
     },
-
   },
 
   async created() {

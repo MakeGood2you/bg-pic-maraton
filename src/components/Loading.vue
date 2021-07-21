@@ -34,7 +34,6 @@ export default {
   },
   watch: {
     loading(val){
-      debugger
       console.log(val)
       if (val){
         this.showLoading()

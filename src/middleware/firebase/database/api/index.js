@@ -1,4 +1,4 @@
-import firebaseInstance from '../../';
+import firebaseInstance from '../../index';
 
 export default {
   create, get, remove, set, getList,update
@@ -14,6 +14,7 @@ async function create(entity, document) {
 }
 
 async function set(entity, document) {
+  debugger
   const result = await db.ref(entity).set(document)
   try {
     return result

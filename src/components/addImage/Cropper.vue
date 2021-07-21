@@ -95,6 +95,7 @@ export default {
       }
       await this.myCroppa.generateBlob(
           async (blob) => {
+            debugger
             await this.uploadImage(blob)
           },
           '.jpg, .png, .jpeg, image/*'); // 80% compressed jpeg file
@@ -106,12 +107,11 @@ export default {
       if (this.LocalGuestLimit <= 0) {
         console.log('none')
       } else {
-this.setBoolean({stateName:'loading', bool:true})
+        this.setBoolean({stateName:'loading', bool:true})
         const options = this.createParams(file)
         await this.uploadImageToStorage(options)
-        debugger
         this.setBoolean({stateName:'loading', bool:false})
-
+        console.log('image uploaded')
       }
     },
 

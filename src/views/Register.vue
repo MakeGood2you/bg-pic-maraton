@@ -43,7 +43,9 @@
 
 import firebaseInstance from '../middleware/firebase'
 import database from "../middleware/firebase/database";
+import db from "../middleware/firebase/database/api";
 import pictureAdded from "../views/pictureAdded";
+import {mapActions} from "vuex";
 
 const window = {
   recaptchaVerifier: undefined
@@ -73,20 +75,18 @@ export default {
   },
 
   methods: {
-
+...mapActions('auth',['setGuest']),
     async sendCodeToVerify() {
 
       window.recaptchaVerifier = new firebaseInstance.firebase.auth.RecaptchaVerifier('recaptcha-container');
       const phoneNumber = '+972' + this.phone;
       const appVerifier = window.recaptchaVerifier;
-      debugger
       firebaseInstance.firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
 
           .then((confirmationResult) => {
             // SMS sent. Prompt user to type the code from the message, then sign the
             // user in with confirmationResult.confirm(code).
             window.confirmationResult = confirmationResult;
-            debugger
             alert('קוד אימות נשלח ברגעים אלו')
             this.code = !this.code
 
@@ -96,25 +96,24 @@ export default {
 
     async logWithPhone(password) {
 
-      const userIdentity = this.$route.params.uid
-      const eventIdentity = this.$route.params.eid
+      const uid = this.$route.params.uid
+      const eid = this.$route.params.eid
       const guestPhone = this.phone
       const guestName = this.details.fullName
       const guestsDetails = this.details
 
+      let entity = `users/${uid}/data/events/${eid}/imgLimit`
+      const limit = await db.get(entity)
+      this.details.limit = limit
+      console.log(this.details.limit)
 
-      await database.getLimit({userIdentity, eventIdentity}).then((res) => {
-        this.details.limit = res
-        console.log(this.details.limit)
-      })
 
-
-      await database.setDetails({userIdentity, eventIdentity, guestsDetails, guestPhone})
+      await this.setGuest({eid, uid, guestPhone , guestsDetails })
       window.confirmationResult.confirm(password).then((invited) => {
         alert('הרישום בוצע בהצלחה')
         let user = invited.user;
 
-        this.$router.push(`/pictureAdded/${userIdentity}/${eventIdentity}/${guestPhone}/${guestName}`);
+        this.$router.push(`/pictureAdded/${uid}/${eid}/${guestPhone}/${guestName}`);
 
       }).catch((error) => {
         alert('הקוד אינו תקין')

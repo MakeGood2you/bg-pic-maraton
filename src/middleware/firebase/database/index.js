@@ -1,14 +1,14 @@
 import firebaseInstance from '../';
 
 async function getLimit(options) {
-    return await firebaseInstance.firebase.database().ref(`users/${options.userIdentity}/data/events/${options.eventIdentity}/imgLimit`).once('value').then((res) => {
+    return await firebaseInstance.firebase.database().ref(`users/${options.uid}/data/events/${options.eid}/imgLimit`).once('value').then((res) => {
         console.log(res.val())
         return res.val()
     })
 }
 
 async function getLimitFromGuest(options) {
-    return await firebaseInstance.firebase.database().ref(`users/${options.userIdentity}/data/events/${options.eventIdentity}/guests/${options.phoneNumber}/limit`).once('value').then((res) => {
+    return await firebaseInstance.firebase.database().ref(`users/${options.uid}/data/events/${options.eid}/guests/${options.phoneNumber}/limit`).once('value').then((res) => {
         console.log(res.val())
         return res.val()
     })
@@ -33,7 +33,6 @@ async function setLimit(options) {
 }
 
 function setDetails(options) {
-    debugger
     return firebaseInstance.firebase.database().ref(`users/${options.uid}/data/events/${options.eid}/guests/${options.phone}`).once(`value`)
         .then(res => {
             let x = null;
@@ -46,7 +45,6 @@ function setDetails(options) {
                 }
             }
             if (x === null) {
-                debugger
                 return firebaseInstance.firebase.database().ref(`users/${options.uid}/data/events/${options.eid}/guests/${options.phone}`).set(options.guestsDetails)
             }
         })
@@ -60,7 +58,6 @@ async function getIsOpen(options) {
 function getAdminDetails(options) {
     return firebaseInstance.firebase.database().ref(`users/${options.userIdentity}/data/events/${options.eventIdentity}`).once(`value`)
         .then((res) => {
-            debugger
             return res.val()
         })
 }
