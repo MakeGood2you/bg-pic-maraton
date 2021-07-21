@@ -109,6 +109,7 @@ export default {
       } else {
         this.setBoolean({stateName:'loading', bool:true})
         const options = this.createParams(file)
+        debugger
         await this.uploadImageToStorage(options)
         this.setBoolean({stateName:'loading', bool:false})
         console.log('image uploaded')
@@ -129,6 +130,8 @@ export default {
   async created() {
     console.log(this.params)
     this.LocalGuestLimit = this.guestLimit
+    console.log(' this.LocalGuestLimit ', this.LocalGuestLimit)
+    console.log(' this.this.guestLimit ', this.guestLimit)
   }
 }
 </script>

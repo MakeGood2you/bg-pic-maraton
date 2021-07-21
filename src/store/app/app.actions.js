@@ -30,18 +30,20 @@ export default {
         // set limit of image each user
         const dbFileName = length < 10 ? `0${length}` : `${length}`
         entity = `users/${options.uid}/data/events/${options.eid}/photos/${dbFileName}`
-       debugger
+
         await db.set(entity, {
             photoURL: urlBlob,
             isDownload: false,
             isChosen: false,
-            uploadTime: new Date().getTime()
+            uploadTime: `${new Date().getTime()}`
         })
 
         entity = `users/${options.uid}/data/events/${options.eid}/picCounter`
         await db.set(entity, length)
+        debugger
         entity = `guests/${options.uid}/${options.eid}/${options.phoneNumber}/limit`
         await db.set(entity, options.limitedPicCounter)
+        debugger
         commit('setGuestLimit', options.limitedPicCounter)
     },
 
@@ -80,14 +82,15 @@ export default {
     },
 
     getLimitFromGuest: async ({commit, dispatch}, options) => {
-        let entity = `guests/${options.uid}/${options.eid}/${options.guestPhone}`
+        let entity = `guests/${options.uid}/${options.eid}/${options.phoneNumber}/limit`
         const guestLimit = await db.get(entity)
-        commit("setGuestLimit", guestLimit)
+        debugger
+        commit("setGuestLimit", parseInt(guestLimit))
     },
     getLimitFromAdmin: async ({commit, dispatch}, options) => {
         const entity = `${eventPath(options.uid,options.eid)}/imgLimit`
         const adminLimit = await db.get(entity)
-        commit("setGuestLimit", adminLimit)
+        commit("setGuestLimit", parseInt(adminLimit))
     },
 
 }
