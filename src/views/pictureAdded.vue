@@ -64,7 +64,7 @@ export default {
     ...mapState('app', ['confirmDialog', 'daylight', 'guestLimit', 'eventDetails', 'businessInfo']),
   },
   methods: {
-    ...mapActions('app', ['uploadImageToStorage', 'isEventOpenPermission', 'getAdminDetails', 'getBusinessInfo','getLimitFromGuest']),
+    ...mapActions('app', ['uploadImageToStorage', 'isEventOpenPermission', 'getAdminDetails', 'getBusinessInfo', 'getLimitFromGuest']),
     ...mapActions('auth', ['setLead']),
     async init() {
       const options = this.params
@@ -73,9 +73,22 @@ export default {
       await this.isEventOpenPermission()
       await this.getBusinessInfo(options)
     },
-
+    createLeadDetails() {
+      return  {
+        eid: this.params.eid,
+        uid: this.params.uid,
+        firstName:this.params.firstName,
+        phoneNumber:this.params.phoneNumber,
+        eventDate:this.eventDetails.date,
+        eventStyle:this.eventDetails.eventStyle,
+        eventPlace:this.eventDetails.place,
+        createdTime:new Date().getTime(),
+        isNewLead:true
+      }
+    },
     async copy() {
-     await this.setLead(this.params)
+      const lead = this.createLeadDetails()
+      await this.setLead(lead)
       alert('הפרטים שלך נשלחו בהצלחה')
       // this.$q.notify(positive('התחברת בהצלחה :)'))
     },
@@ -83,6 +96,19 @@ export default {
 
   async created() {
     await this.init()
+    // for (var i = 0; i < 40; i++){
+    //   await this.setLead({
+    //     eid: this.params.eid,
+    //     uid: this.params.uid,
+    //     firstName: 'kobi'+i,
+    //     phoneNumber:this.params.phoneNumber+i,
+    //     eventDate:this.eventDetails.date,
+    //     eventStyle:this.eventDetails.eventStyle,
+    //     eventPlace:'טרויה',
+    //     createdTime:new Date().getTime(),
+    //     isNewLead:true
+    //   })
+    // }
   }
 }
 </script>

@@ -14,7 +14,6 @@ async function create(entity, document) {
 }
 
 async function set(entity, document) {
-  debugger
   const result = await db.ref(entity).set(document)
   try {
     return result

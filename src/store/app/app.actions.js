@@ -40,16 +40,15 @@ export default {
 
         entity = `users/${options.uid}/data/events/${options.eid}/picCounter`
         await db.set(entity, length)
-        debugger
         entity = `guests/${options.uid}/${options.eid}/${options.phoneNumber}/limit`
         await db.set(entity, options.limitedPicCounter)
-        debugger
         commit('setGuestLimit', options.limitedPicCounter)
     },
 
     getAdminDetails: async ({commit, state, dispatch}, options) => {
         const entity = `users/${options.uid}/data/events/${options.eid}`// event entity
         const eventDetails = await db.get(entity) // get event details
+        console.log(eventDetails)
         commit('setEventDetails', eventDetails)
     },
 
@@ -84,7 +83,6 @@ export default {
     getLimitFromGuest: async ({commit, dispatch}, options) => {
         let entity = `guests/${options.uid}/${options.eid}/${options.phoneNumber}/limit`
         const guestLimit = await db.get(entity)
-        debugger
         commit("setGuestLimit", parseInt(guestLimit))
     },
     getLimitFromAdmin: async ({commit, dispatch}, options) => {

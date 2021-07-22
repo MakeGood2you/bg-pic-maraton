@@ -4,10 +4,9 @@ import db from "../../middleware/firebase/database/api";
 
 
 export default {
-    setLead: async ({state, commit}, options) => {
-        debugger
-        let entity = `users/${options.uid}/data/leads/${options.phoneNumber}/name`
-        await db.set(entity, options)
+    setLead: async ({state, commit}, lead) => {
+        let entity = `users/${lead.uid}/data/leads/${lead.phoneNumber}/`
+        await db.set(entity, lead)
     },
 
     setGuest: async ({state, commit}, options) => {
