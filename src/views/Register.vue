@@ -3,11 +3,11 @@
     <br><br><br>
     <div class="background">
       <br>
-      <img alt="Shareve logo" class="image" src="../assets/one.png" width="160">
+      <img alt="picpic-logo" class="image" src="../assets/logo2.png" width="240">
       <div class="ori" dir="rtl">
         <form class="q-gutter-md">
           <br>
-          <h5>התחבר כמוזמן</h5>
+          <h5>התחברות</h5>
           <div>
             <div dir="ltr" v-if="!code">
               <q-input id="fullName" v-model="details.fullName" :rules="[val => !!val || 'שדה חובה']" type="text"> שם
