@@ -15,6 +15,7 @@ export default {
     //   phoneNumber: this.phoneNumber,
     //   limitedPicCounter: this.limitedPic from user
     uploadImageToStorage: async ({commit, state, dispatch}, options) => {
+        let entity = `users/${options.uid}/events/${options.eid}`
         const storageRef = (entity) => storage.storageRef(entity)
         let entity = `users/${options.uid}/events/${options.eid}`
 
