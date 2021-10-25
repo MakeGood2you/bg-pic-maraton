@@ -15,10 +15,10 @@
               <q-input id="phone" v-model="phone" :rules="[val => !!val || 'שדה חובה']" mask="###-###-####" stack-label>
                 טלפון
               </q-input>
-              <div id="recaptcha-container">
-              </div>
             </div>
+            <div id="recaptcha-container" v-if="!code">
 
+            </div>
             <br>
             <div v-show="code" class="verifyCode">
               <q-input id="code" v-model="password" label="הזן את קוד האימות" stack-label/>
@@ -89,7 +89,6 @@ export default {
             window.confirmationResult = confirmationResult;
             alert('קוד אימות נשלח ברגעים אלו')
             this.code = !this.code
-
           })
     },
 

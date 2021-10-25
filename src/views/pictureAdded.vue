@@ -16,7 +16,7 @@
 
 
     <cropper :params="params"></cropper>
-    <q-footer class="header-card footerLa" style="background-color: rgba(255,255,255,0.51); color: black">
+    <q-footer class="header-card footerLa" style="background-color: rgb(250,250,250); color: black">
       <br>
       <p style="margin-top: 20px; font-size: 19px; width: 100%; margin: auto"><b>גם אתם רוצים את {{ businessInfo.BName }}?</b></p>
       <div style="margin-top: -12px">
@@ -115,7 +115,7 @@ export default {
 
 <style>
 body {
-  background-color: #d9d2cd;
+  background-color: #e3e2e2;
 }
 
 .imgTable {
@@ -133,7 +133,7 @@ body {
   height: 22%;
   text-align: center;
   margin: auto;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.29);
   color: #000000;
 }
 
@@ -161,7 +161,7 @@ body {
 /*}*/
 
 .croppa-container {
-  background-color: #eae7e5;
+  background-color: rgba(255, 255, 255, 0.93);
   border: 1px solid grey;
 }
 

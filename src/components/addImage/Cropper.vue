@@ -31,10 +31,10 @@
 
     <div class="row justify-between q-my-sm btns">
       <q-btn
-          style="width: 162px;
-            background-color: #505050;
-            color: #fdfdfe"
-          @click="myCroppa.rotate(-1)"
+           style="width: 162px;
+           background-color: #505050;
+           color: #fdfdfe"
+           @click="myCroppa.rotate(-1)"
       >
         <q-icon name="rotate_90_degrees_ccw"/>
       </q-btn>
@@ -73,8 +73,8 @@ export default {
     // eid: this.$route.params.eid,
     // phoneNumber: this.$route.params.phone,
     // firstName: this.$route.params.fullName,
-
   }),
+
   computed: {
     placeholder() {
       return this.myCroppa && this.myCroppa.loading ? '' : 'Choose a large file to see the loading'
@@ -141,7 +141,6 @@ export default {
 }
 
 .send {
-
   width: 328.875px;
 }
 
