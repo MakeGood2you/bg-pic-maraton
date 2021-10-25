@@ -3,7 +3,7 @@ import db from '../../middleware/firebase/database/api'
 import storage from '../../middleware/firebase/storage/'
 import {formatNewDateToString} from './utils'
 
-const eventPath = (uid,eid) => `users/${uid}/data/events/${eid}`
+const eventPath = (uid, eid) => `users/${uid}/data/events/${eid}`
 export default {
     // this is the options object///
     ///////////////////////////////
@@ -45,6 +45,12 @@ export default {
         commit('setGuestLimit', options.limitedPicCounter)
     },
 
+    isEventExist: async ({commit, state, dispatch}, options) => {
+        const entity = `users/${options.uid}/data/events/${options.eid}`// event entity
+        const isEntity= await db.get(entity)
+        return isEntity
+    },
+
     getAdminDetails: async ({commit, state, dispatch}, options) => {
         const entity = `users/${options.uid}/data/events/${options.eid}`// event entity
         const eventDetails = await db.get(entity) // get event details
@@ -58,7 +64,11 @@ export default {
 
         commit('setBusinessInfo', businessInfo)
     },
-
+    isEventOpenPermissionOpen:async ({commit, state}, options) => {
+        const entity = `users/${options.uid}/data/events/${options.eid}/isOpen`// event entity
+        const isEntity= await db.get(entity)
+        return isEntity
+    },
     isEventOpenPermission: async ({commit, state}) => {
         const momentDate = formatNewDateToString()
         const eventDate = state.eventDetails.date
@@ -86,7 +96,7 @@ export default {
         commit("setGuestLimit", parseInt(guestLimit))
     },
     getLimitFromAdmin: async ({commit, dispatch}, options) => {
-        const entity = `${eventPath(options.uid,options.eid)}/imgLimit`
+        const entity = `${eventPath(options.uid, options.eid)}/imgLimit`
         const adminLimit = await db.get(entity)
         commit("setGuestLimit", parseInt(adminLimit))
     },

@@ -101,13 +101,19 @@ export default {
       const guestName = this.details.fullName
       const guestsDetails = this.details
 
+
       let entity = `users/${uid}/data/events/${eid}/imgLimit`
       const limit = await db.get(entity)
       this.details.limit = limit
       console.log(this.details.limit)
 
+      let ExistingUser = `guests/${uid}/${eid}/${guestPhone}`
+      const existUser = await db.get(ExistingUser)
+      console.log(existUser)
+      if (!existUser){
+        await this.setGuest({eid, uid, guestPhone , guestsDetails })
+      }
 
-      await this.setGuest({eid, uid, guestPhone , guestsDetails })
       window.confirmationResult.confirm(password).then((invited) => {
         alert('הרישום בוצע בהצלחה')
         let user = invited.user;

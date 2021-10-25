@@ -15,7 +15,7 @@
             :disable-drag-to-move="false"
             :disable-scroll-to-zoom="false"
             :disable-rotation="false"
-            :prevent-white-space="false"
+            :prevent-white-space="true"
             :reverse-scroll-to-zoom="false"
             :show-remove-button="false"
             :remove-button-color="'red'"
@@ -86,20 +86,34 @@ export default {
   },
 
   methods: {
-    ...mapActions('app', ['uploadImageToStorage']),
+    ...mapActions('app', ['uploadImageToStorage', 'isEventExist','isEventOpenPermissionOpen']),
     ...mapMutations('app', ['setBoolean']),
     async uploadCroppedImage() {
+
       if (!this.myCroppa.hasImage()) {
         alert('no image to upload')
         return
       }
-      await this.myCroppa.generateBlob(
-          async (blob) => {
-            await this.uploadImage(blob)
-          },
-          '.jpg, .png, .jpeg, image/*'); // 80% compressed jpeg file
-      console.log(this.myCroppa)
-      this.myCroppa.remove()
+      const options = await this.params
+      const isEventExist = await this.isEventExist(options) //if the admin delete the event
+      console.log('isEventExistKobi ', isEventExist)
+
+       const isOpenPermission = await this.isEventOpenPermissionOpen(options)// if the admin close the permission
+      console.log('isOpenPermission ', isOpenPermission)
+
+
+      if (isEventExist && isOpenPermission){
+        await this.myCroppa.generateBlob(
+            async (blob) => {
+              await this.uploadImage(blob)
+            },
+            '.jpg, .png, .jpeg, image/*'); // 80% compressed jpeg file
+        console.log(this.myCroppa)
+        this.myCroppa.remove()
+      }
+      else {
+        alert('האירוע נסגר - לא ניתן להעלות תמונות')
+      }
     },
 
     async uploadImage(file) {

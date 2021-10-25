@@ -14,7 +14,7 @@ export default {
   methods: {
     showLoading() {
       this.$q.loading.show({
-        message: 'Some important process is in progress. Hang on...',
+        message: '👍 התמונה נשלחת אלי ברגעים אלו... עבודה טובה ',
         messageColor: 'black'
       })
 
