@@ -16,17 +16,15 @@ export default {
     //   limitedPicCounter: this.limitedPic from user
     uploadImageToStorage: async ({commit, state, dispatch}, options) => {
         let entity = `users/${options.uid}/events/${options.eid}`
-        const storageRef = (entity) => storage.storageRef(entity)
-        let entity = `users/${options.uid}/events/${options.eid}`
-
-        let listResult = await storageRef(entity).listAll()//// check the length of all files
+        const storageRef = storage.storageRef(entity)
+        let listResult = await storageRef.listAll()//// check the length of all files
         let length = listResult.items.length
         ++length
         //create path
         const pathEntityBlob = entity + '/' + length
         // uploader image blob
-        await storageRef(pathEntityBlob).put(options.file)
-        const urlBlob = await storageRef(pathEntityBlob).getDownloadURL()
+        await storage.storageRef(pathEntityBlob).put(options.file)
+        const urlBlob = await storage.storageRef(pathEntityBlob).getDownloadURL()
         console.log(urlBlob)
         // set limit of image each user
         const dbFileName = length < 10 ? `0${length}` : `${length}`
@@ -42,8 +40,8 @@ export default {
         entity = `users/${options.uid}/data/events/${options.eid}/picCounter`
         await db.set(entity, length)
         entity = `guests/${options.uid}/${options.eid}/${options.phoneNumber}/limit`
-        await db.set(entity, options.limitedPicCounter)
-        commit('setGuestLimit', options.limitedPicCounter)
+        commit('reduceGuestLimit')
+        await db.set(entity, state.guestLimit)
     },
 
     isEventExist: async ({commit, state, dispatch}, options) => {

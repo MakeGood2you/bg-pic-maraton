@@ -101,7 +101,6 @@ export default {
       const guestName = this.details.fullName
       const guestsDetails = this.details
 
-
       let entity = `users/${uid}/data/events/${eid}/imgLimit`
       const limit = await db.get(entity)
       this.details.limit = limit

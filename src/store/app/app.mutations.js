@@ -14,6 +14,9 @@ export default {
     setBusinessInfo: (state, businessInfo) => {
         state.businessInfo = businessInfo
     },
+    reduceGuestLimit: (state) => {
+        state.guestLimit = state.guestLimit - 1
+    },
     // setTrue: (state, name) => {
     //     state[name] = true
     // },

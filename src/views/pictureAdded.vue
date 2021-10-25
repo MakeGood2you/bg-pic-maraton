@@ -10,7 +10,7 @@
       <div class="croppa column items-center">
         <div class="btns">
           <p class="btns q-pa-sm" style="width: 200px; margin-top: -20px">כמות תמונות שנותרו לפיתוח:
-            <b>{{ guestLimit }}</b></p>
+            <b>{{ guestLimit <= 0 ? 0 :  guestLimit }}</b></p>
         </div>
       </div>
 
@@ -96,19 +96,6 @@ export default {
 
   async created() {
     await this.init()
-    // for (var i = 0; i < 40; i++){
-    //   await this.setLead({
-    //     eid: this.params.eid,
-    //     uid: this.params.uid,
-    //     firstName: 'kobi'+i,
-    //     phoneNumber:this.params.phoneNumber+i,
-    //     eventDate:this.eventDetails.date,
-    //     eventStyle:this.eventDetails.eventStyle,
-    //     eventPlace:'טרויה',
-    //     createdTime:new Date().getTime(),
-    //     isNewLead:true
-    //   })
-    // }
   }
 }
 </script>

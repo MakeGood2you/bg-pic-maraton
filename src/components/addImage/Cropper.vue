@@ -48,7 +48,7 @@
     </div>
     <div class="column send">
       <q-btn
-          @click="uploadCroppedImage"
+          @click="uploadCroppedImage()"
           color="positive"
           label="שלח"
           style="font-size: 15px"
@@ -68,6 +68,7 @@ export default {
   data: () => ({
     myCroppa: {},
     LocalGuestLimit: 0,
+    counter: 0,
     dataURL: ''
     // uid: this.$route.params.uid,
     // eid: this.$route.params.eid,
@@ -88,8 +89,7 @@ export default {
   methods: {
     ...mapActions('app', ['uploadImageToStorage', 'isEventExist','isEventOpenPermissionOpen']),
     ...mapMutations('app', ['setBoolean']),
-    async uploadCroppedImage() {
-
+    async uploadCroppedImage(type, compressionRate) {
       if (!this.myCroppa.hasImage()) {
         alert('no image to upload')
         return
@@ -98,34 +98,33 @@ export default {
       const isEventExist = await this.isEventExist(options) //if the admin delete the event
       console.log('isEventExistKobi ', isEventExist)
 
-       const isOpenPermission = await this.isEventOpenPermissionOpen(options)// if the admin close the permission
+      const isOpenPermission = await this.isEventOpenPermissionOpen(options)// if the admin close the permission
       console.log('isOpenPermission ', isOpenPermission)
 
 
-      if (isEventExist && isOpenPermission){
+      if (isEventExist && isOpenPermission) {
         await this.myCroppa.generateBlob(
             async (blob) => {
               await this.uploadImage(blob)
             },
-            '.jpg, .png, .jpeg, image/*'); // 80% compressed jpeg file
+            type, compressionRate); // 80% compressed jpeg file
         console.log(this.myCroppa)
         this.myCroppa.remove()
-      }
-      else {
+      } else {
         alert('האירוע נסגר - לא ניתן להעלות תמונות')
       }
     },
 
     async uploadImage(file) {
-      if (this.LocalGuestLimit <= 0) {
-        console.log('none')
-      } else {
-        this.setBoolean({stateName:'loading', bool:true})
-        const options = this.createParams(file)
+    if (!this.guestLimit) {
+      console.error('no limit to upload')
+      return
+    }
+        this.setBoolean({stateName: 'loading', bool: true})
+        let options = this.createParams(file)
         await this.uploadImageToStorage(options)
-        this.setBoolean({stateName:'loading', bool:false})
+        this.setBoolean({stateName: 'loading', bool: false})
         console.log('image uploaded')
-      }
     },
 
     createParams(file) {
@@ -135,7 +134,6 @@ export default {
         uid: this.params.uid,
         eid: this.params.eid,
         phoneNumber: this.params.phoneNumber,
-        limitedPicCounter: --this.LocalGuestLimit
       }
     }
   },
