@@ -17,6 +17,12 @@ export default {
     reduceGuestLimit: (state) => {
         state.guestLimit = state.guestLimit - 1
     },
+    setFrame: (state, frame) => {
+        state.frame = frame
+    },
+    setFrameSize:(state, frameSize) => {
+    state.frameSize = frameSize
+},
     // setTrue: (state, name) => {
     //     state[name] = true
     // },

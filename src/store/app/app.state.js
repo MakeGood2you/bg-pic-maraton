@@ -4,6 +4,8 @@ export default {
     error: '',
     isOpen: false,
     adminLimit:'',
+    frame:null,
+    frameSize:{},
     daylight: false,
     eventDetails: {
         QR: true,

@@ -69,17 +69,17 @@ export default {
         return isEntity
     },
     isEventOpenPermission: async ({commit, state}) => {
-        const momentDate = formatNewDateToString()
+        const momentDate = await formatNewDateToString()
         const eventDate = state.eventDetails.date
         if (momentDate === eventDate) {
             const isOpen = state.eventDetails.isOpen
             console.log(isOpen)
             if (isOpen === null || undefined) {
-                commit('setBoolean', {stateName: 'daylight', bool: false}) //close event
+                await commit('setBoolean', {stateName: 'daylight', bool: false}) //close event
                 alert('הגישה למערכת חסומה')
             } else {
                 if (isOpen === true) {
-                    commit('setBoolean', {stateName: 'daylight', bool: true}) // open event
+                   await commit('setBoolean', {stateName: 'daylight', bool: true}) // open event
                 } else {
                     alert('הרשאה למערכת לא תקפה')
                 }
@@ -87,6 +87,23 @@ export default {
         } else {
             alert('הרשאה לשימוש תפתח ביום האירוע')
         }
+    },
+
+    getFrame: async ({commit, dispatch}, options) => {
+        let entity = `users/${options.uid}/data/events/${options.eid}/frame/photoURL`
+        const frame = await db.get(entity)
+        console.log('frame ', frame)
+
+         commit("setFrame", frame)
+        return frame
+    },
+
+    frameRatio: async ({commit, dispatch}, options) => {
+        let entity = `users/${options.uid}/data/events/${options.eid}/frameRatio`
+        const frameSize = await db.get(entity)
+
+        commit("setFrameSize", frameSize)
+        return frameSize
     },
 
     getLimitFromGuest: async ({commit, dispatch}, options) => {

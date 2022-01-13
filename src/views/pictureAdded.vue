@@ -13,8 +13,6 @@
             <b>{{ guestLimit <= 0 ? 0 :  guestLimit }}</b></p>
         </div>
       </div>
-
-
     <cropper :params="params"></cropper>
     <q-footer class="header-card footerLa" style="background-color: rgb(250,250,250); color: black">
       <br>
@@ -148,7 +146,7 @@ body {
 /*}*/
 
 .croppa-container {
-  background-color: rgba(255, 255, 255, 0.93);
+  background-color: #d2c7c3;
   border: 1px solid grey;
 }
 

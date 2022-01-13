@@ -1,13 +1,13 @@
 <template>
   <div class="column items-center">
     <croppa v-model="myCroppa"
-            :width="328.875"
-            :height="232.5"
+            :width='frameWidth'
+            :height='frameHeight'
             :align="'center'"
             :placeholder-font-size="0"
-            :placeholder-color="'default'"
+            :placeholder-color="'black'"
             :accept="'.jpg, .jpeg, .png, image/*'"
-            :quality="2"
+            :quality="realQuality"
             initial-size="cover"
             :zoom-speed="3"
             :disabled="false"
@@ -22,24 +22,27 @@
             :remove-button-size="0"
             class="column items-center"
             :show-loading="true"
+            @file-choose="handleWarn"
+            @draw="onDraw"
+
     >
 
+      <img slot="placeholder" :src="frame" crossOrigin="anonymous" height="10px" class="sticker">
       <!--      <div class="spinner" v-if="myCroppa && myCroppa.loading"></div>-->
-
     </croppa>
     <Loading v-if="loading"></Loading>
 
     <div class="row justify-between q-my-sm btns">
       <q-btn
-           style="width: 162px;
+          style="width: 152px;
            background-color: #505050;
            color: #fdfdfe"
-           @click="myCroppa.rotate(-1)"
+          @click="myCroppa.rotate(-1)"
       >
         <q-icon name="rotate_90_degrees_ccw"/>
       </q-btn>
       <q-btn
-          style="width: 162px"
+          style="width: 152px"
           @click="myCroppa.remove()"
           color="red"
       >
@@ -69,11 +72,12 @@ export default {
     myCroppa: {},
     LocalGuestLimit: 0,
     counter: 0,
-    dataURL: ''
-    // uid: this.$route.params.uid,
-    // eid: this.$route.params.eid,
-    // phoneNumber: this.$route.params.phone,
-    // firstName: this.$route.params.fullName,
+    dataURL: '',
+    frame: null,
+    frameSize: {},
+    frameWidth: '',
+    frameHeight: '',
+    realQuality: ''
   }),
 
   computed: {
@@ -87,7 +91,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('app', ['uploadImageToStorage', 'isEventExist','isEventOpenPermissionOpen']),
+    ...mapActions('app', ['uploadImageToStorage', 'isEventExist', 'isEventOpenPermissionOpen', 'getFrame', 'frameRatio']),
     ...mapMutations('app', ['setBoolean']),
     async uploadCroppedImage(type, compressionRate) {
       if (!this.myCroppa.hasImage()) {
@@ -103,8 +107,10 @@ export default {
 
 
       if (isEventExist && isOpenPermission) {
+        await console.log('this.myCroppa ', this.myCroppa.generateBlob)
         await this.myCroppa.generateBlob(
             async (blob) => {
+              debugger
               await this.uploadImage(blob)
             },
             type, compressionRate); // 80% compressed jpeg file
@@ -115,16 +121,31 @@ export default {
       }
     },
 
+    async handleWarn() {
+      await alert('שימו לב! תמונות שלא מהאירוע לא יפותחו')
+    },
     async uploadImage(file) {
-    if (!this.guestLimit) {
-      console.error('no limit to upload')
-      return
-    }
-        this.setBoolean({stateName: 'loading', bool: true})
-        let options = this.createParams(file)
-        await this.uploadImageToStorage(options)
-        this.setBoolean({stateName: 'loading', bool: false})
-        console.log('image uploaded')
+      if (!this.guestLimit) {
+        console.error('no limit to upload')
+        return
+      }
+      this.setBoolean({stateName: 'loading', bool: true})
+      let options = this.createParams(file)
+      await this.uploadImageToStorage(options)
+      this.setBoolean({stateName: 'loading', bool: false})
+      console.log('image uploaded')
+    },
+    async getFrameSize() {
+      this.frameSize = await this.frameRatio(this.params)
+      if (this.frameSize === '10x15') {
+        this.frameWidth = 311.811023623
+        this.frameHeight = 207.874015745
+        this.realQuality = 3.6363636363
+      } else {
+        this.frameWidth = 311.811023623
+        this.frameHeight = 233.85826812
+        this.realQuality = 2.4242424242
+      }
     },
 
     createParams(file) {
@@ -135,13 +156,16 @@ export default {
         eid: this.params.eid,
         phoneNumber: this.params.phoneNumber,
       }
+    },
+    onDraw(ctx) {
+      ctx.save()
+      ctx.drawImage(document.querySelector('.sticker'), 0, 0, this.frameWidth * this.realQuality, this.frameHeight * this.realQuality)
     }
   },
   async created() {
-    console.log(this.params)
     this.LocalGuestLimit = this.guestLimit
-    console.log(' this.LocalGuestLimit ', this.LocalGuestLimit)
-    console.log(' this.this.guestLimit ', this.guestLimit)
+    this.frame = await this.getFrame(this.params)
+    await this.getFrameSize()
   }
 }
 </script>
@@ -149,21 +173,18 @@ export default {
 <style scoped>
 
 .btns {
-  width: 328.875px;
+  width: 311.811023623px;
 }
 
 .send {
-  width: 328.875px;
+  width: 311.811023623px;
 }
 
-/*.croppa-container {*/
-/*  background-color: lightblue;*/
-/*  border: 2px solid grey;*/
-/*  border-radius: 8px;*/
-/*}*/
+.croppa-container {
+  background-color: #F9F9F9;
+}
 
-/*.croppa-container:hover {*/
-/*  opacity: 1;*/
-/*  background-color: #8ac9ef;*/
-/*}*/
+.croppa-container:hover {
+  background-color: #F9F9F9;
+}
 </style>
