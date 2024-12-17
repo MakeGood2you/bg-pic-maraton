@@ -7,13 +7,7 @@ const eventPath = (uid, eid) => `users/${uid}/data/events/${eid}`
 export default {
     // this is the options object///
     ///////////////////////////////
-    //   firstName,
-    //   file,
-    //   uid:userid
-    //   eid: event id,
-    //   fileName: file[0].name,
-    //   phoneNumber: this.phoneNumber,
-    //   limitedPicCounter: this.limitedPic from user
+
     uploadImageToStorage: async ({commit, state, dispatch}, options) => {
         let entity = `users/${options.uid}/events/${options.eid}`
         const storageRef = storage.storageRef(entity)
